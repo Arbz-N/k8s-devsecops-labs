@@ -1,4 +1,4 @@
-NGINX Ingress + Cert-Manager TLS on Kind Cluster
+# NGINX Ingress + Cert-Manager TLS on Kind Cluster
 
     Overview
     This project is a hands-on project that sets up a Kubernetes Ingress Controller on a local Kind cluster 
@@ -14,7 +14,7 @@ NGINX Ingress + Cert-Manager TLS on Kind Cluster
     selfSigned Issuer used for local testing (swap for Let's Encrypt in production)
     Multi-path routing with nginx.ingress.kubernetes.io/rewrite-target annotation
 
-Project Structure:
+## Project Structure:
 
     NGINX-Ingress-Cert-Manager-TLS-on-Kind-Cluster/
     │
@@ -27,14 +27,14 @@ Project Structure:
     │
     └── README.md               # Project documentation
 
-Prerequisites:
+## Prerequisites:
 
     Requirement              Check
     Kind                     kind --version
     kubectl                  kubectl version --client
     sudo access              /etc/hosts editing + port 80/443 binding
 
-Architecture:
+## Architecture:
 
         Browser / curl
                │
@@ -66,7 +66,7 @@ Architecture:
           └──────────────────────────────────────────────┘
 
 
-Cluster Setup
+## Cluster Setup:
 
     Create Kind Cluster
     kind create cluster --config kind-ingress.yaml
@@ -79,7 +79,7 @@ Cluster Setup
     kubectl get pods -n ingress-nginx
     # ingress-nginx-controller-xxx   1/1   Running 
 
-Task 1 — Deploy Backend
+### Task 1 — Deploy Backend:
     
     kubectl run caddy --image caddy
     kubectl expose pod caddy --name caddy-svc --port 80
@@ -90,7 +90,7 @@ Task 1 — Deploy Backend
     kubectl describe svc caddy-svc
     # Endpoints: 10.x.x.x:80 
 
-Task 2 — HTTP Ingress (ingress-http.yaml)
+### Task 2 — HTTP Ingress (ingress-http.yaml):
 
     No TLS — plain HTTP routing only.
     kubectl apply -f ingress-http.yaml
@@ -107,7 +107,7 @@ Task 2 — HTTP Ingress (ingress-http.yaml)
     curl http://example.com
     # Caddy default page 
 
-Task 3 — Install Cert-Manager
+### Task 3 — Install Cert-Manager:
 
     Why Cert-Manager?
     Without Cert-Manager you manually run openssl, create the Secret yourself, and repeat when the cert expires. 
@@ -169,7 +169,7 @@ Task 3 — Install Cert-Manager
     kubectl get certificaterequest
     # example-tls-xxxx   True   True 
 
-Task 5 — Multi-Path Routing (ingress-multi.yaml)
+### Task 5 — Multi-Path Routing (ingress-multi.yaml):
 
     Routes different URL paths to different backend services
 
@@ -178,7 +178,7 @@ Task 5 — Multi-Path Routing (ingress-multi.yaml)
     curl -k https://example.com/
     curl -k https://example.com/api
 
-Cleanup
+### Cleanup:
 
     kubectl delete ingress simple-ingress multi-ingress 2>/dev/null
     kubectl delete certificate example-tls 2>/dev/null
@@ -193,6 +193,6 @@ Cleanup
     
     cd .. && rm -rf ingress-lab/
 
-License
+### License:
 
     This project is licensed under the MIT License.
