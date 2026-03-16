@@ -1,0 +1,13 @@
+#include <tunables/global>
+
+profile k8s-readonly flags=(attach_disconnected) {
+  #include <abstractions/base>
+
+  # Read only
+  file r,
+  deny /** w,
+  deny /** x,
+
+  # No network
+  deny network,
+}
