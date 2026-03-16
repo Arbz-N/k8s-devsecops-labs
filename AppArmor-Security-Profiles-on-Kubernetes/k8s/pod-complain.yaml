@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: complain-test
+  annotations:
+    container.apparmor.security.beta.kubernetes.io/app: localhost/k8s-complain-test
+spec:
+  containers:
+  - name: app
+    image: busybox:1.28
+    command: ["sh", "-c", "echo test > /tmp/test.txt && sleep 1h"]
