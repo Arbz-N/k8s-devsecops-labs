@@ -127,6 +127,73 @@ Task 3 — Pod With deny-write Profile
     # container.apparmor.security.beta.kubernetes.io/hello:
     # localhost/k8s-apparmor-example-deny-write 
 
+Validate
+
+    kubectl exec -it hello-apparmor -- sh
+    
+    touch test
+    # touch: test: Permission denied  ← AppArmor blocked 
+    
+    echo '123445' > text2.txt
+    # sh: can't create text2.txt: Permission denied  ← blocked 
+    
+    cat /etc/hostname
+    # hello-apparmor  ← read still works
+    
+    ls /
+    # / listed  ← read allowed
+    
+    exit
+
+Task 4 — Pod With deny-network Profile
+    
+    kubectl apply -f k8s/pod-network-deny.yaml
+    
+    kubectl exec -it network-restricted -- sh
+    
+    wget google.com
+    # wget: can't connect to remote host: Permission denied 
+    # ← AppArmor blocked all network 
+    
+    exit
+
+Task 5 — Complain Mode (Profile Development)
+
+    Complain mode logs violations without blocking — 
+    use this to discover what access a container needs before enforcing.
+
+    # Load in complain mode
+    sudo apparmor_parser --add /etc/apparmor.d/k8s-complain-test
+    sudo aa-complain /etc/apparmor.d/k8s-complain-test
+    
+    sudo aa-status | grep -A5 "complain mode"
+    # k8s-complain-test 
+    
+    kubectl apply -f k8s/pod-complain.yaml
+    
+    # Watch logs — violations logged but NOT blocked
+    sudo journalctl -f | grep apparmor
+    # ALLOWED operation (complain mode) ← log only 
+
+
+    Switch to Enforce Mode
+
+
+    sudo aa-enforce /etc/apparmor.d/k8s-complain-test
+    
+    sudo aa-status | grep "k8s-complain-test"
+    # k8s-complain-test ← enforce mode 
+    
+    kubectl delete pod complain-test
+    kubectl apply -f k8s/pod-complain.yaml
+
+Task 6 — New API: securityContext (v1.30+)
+
+    kubectl apply -f k8s/pod-new-api.yaml
+    kubectl describe pod hello-apparmor-new | grep -i apparmor
+    # AppArmor profile applied 
+
+
 
 
  
