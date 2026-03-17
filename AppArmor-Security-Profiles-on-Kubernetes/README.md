@@ -11,7 +11,7 @@
     Complain mode used for safe profile development before enforcing
     Before/after test validation with touch and echo inside pods
 
- Project Structure
+Project Structure
  
     AppArmor-Security-Profiles-on-Kubernetes/
     │
@@ -29,3 +29,10 @@
     │   └── pod-new-api.yaml                  # Pod with securityContext (v1.30+)
     │
     └── README.md
+
+Prerequisites
+ 
+Requirement                      Detail
+Ubuntu/Debian                    AppArmor is enabled by default on Ubuntu
+kubectl                          Connected to cluster
+
