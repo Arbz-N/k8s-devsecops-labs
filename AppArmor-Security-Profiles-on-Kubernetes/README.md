@@ -101,6 +101,33 @@ Task 1 — Load AppArmor Profiles
     readonly Profile
     sudo apparmor_parser /etc/apparmor.d/k8s-readonly
 
+Task 2 — Pod Without AppArmor (Baseline)
+
+    kubectl apply -f k8s/pod.yaml
+    kubectl get pod
+    # hello-apparmor   1/1   Running 
+    
+    kubectl exec -it hello-apparmor -- sh
+    
+    echo '12345' > test.txt
+    cat test.txt
+    # 12345   ← write allowed (no AppArmor)
+    
+    exit
+
+Task 3 — Pod With deny-write Profile
+
+    kubectl delete pod hello-apparmor
+    
+    kubectl apply -f k8s/pod2.yaml
+    kubectl get pod
+    # hello-apparmor   1/1   Running 
+    
+    kubectl describe pod hello-apparmor | grep -A5 "Annotations"
+    # container.apparmor.security.beta.kubernetes.io/hello:
+    # localhost/k8s-apparmor-example-deny-write 
+
+
 
  
 
