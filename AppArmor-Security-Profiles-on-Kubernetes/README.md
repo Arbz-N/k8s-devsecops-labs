@@ -11,7 +11,7 @@
     Complain mode used for safe profile development before enforcing
     Before/after test validation with touch and echo inside pods
 
-Project Structure
+## Project Structure:
  
     AppArmor-Security-Profiles-on-Kubernetes/
     │
@@ -30,7 +30,7 @@ Project Structure
     │
     └── README.md
 
-Prerequisites
+## Prerequisites:
  
     Requirement                      Detail
     Ubuntu/Debian                    AppArmor is enabled by default on Ubuntu
@@ -47,7 +47,7 @@ Prerequisites
     sudo aa-status
     # apparmor module is loaded. 
 
-Architecture
+## Architecture:
 
         Kubernetes Node (Ubuntu)
           ┌──────────────────────────────────────────────────────────┐
@@ -72,7 +72,7 @@ Architecture
           │  └──────────────────────────────────────────────────┘    │
           └──────────────────────────────────────────────────────────┘
 
-Setup — Install AppArmor Tools
+### Setup — Install AppArmor Tools:
 
     sudo apt-get update
     sudo apt-get install -y \
@@ -86,7 +86,7 @@ Setup — Install AppArmor Tools
     ls /etc/apparmor.d/
     # abstractions/  tunables/  usr.bin.man  usr.sbin.rsyslogd ...
 
-Task 1 — Load AppArmor Profiles
+### Task 1 — Load AppArmor Profiles:
 
     sudo apparmor_parser \
       /etc/apparmor.d/k8s-apparmor-example-deny-write
@@ -101,7 +101,7 @@ Task 1 — Load AppArmor Profiles
     readonly Profile
     sudo apparmor_parser /etc/apparmor.d/k8s-readonly
 
-Task 2 — Pod Without AppArmor (Baseline)
+### Task 2 — Pod Without AppArmor (Baseline):
 
     kubectl apply -f k8s/pod.yaml
     kubectl get pod
@@ -115,7 +115,7 @@ Task 2 — Pod Without AppArmor (Baseline)
     
     exit
 
-Task 3 — Pod With deny-write Profile
+### Task 3 — Pod With deny-write Profile:
 
     kubectl delete pod hello-apparmor
     
@@ -127,7 +127,7 @@ Task 3 — Pod With deny-write Profile
     # container.apparmor.security.beta.kubernetes.io/hello:
     # localhost/k8s-apparmor-example-deny-write 
 
-Validate
+### Validate:
 
     kubectl exec -it hello-apparmor -- sh
     
@@ -145,7 +145,7 @@ Validate
     
     exit
 
-Task 4 — Pod With deny-network Profile
+### Task 4 — Pod With deny-network Profile:
     
     kubectl apply -f k8s/pod-network-deny.yaml
     
@@ -157,7 +157,7 @@ Task 4 — Pod With deny-network Profile
     
     exit
 
-Task 5 — Complain Mode (Profile Development)
+### Task 5 — Complain Mode (Profile Development):
 
     Complain mode logs violations without blocking — 
     use this to discover what access a container needs before enforcing.
@@ -187,14 +187,39 @@ Task 5 — Complain Mode (Profile Development)
     kubectl delete pod complain-test
     kubectl apply -f k8s/pod-complain.yaml
 
-Task 6 — New API: securityContext (v1.30+)
+### Task 6 — New API: securityContext (v1.30+):
 
     kubectl apply -f k8s/pod-new-api.yaml
     kubectl describe pod hello-apparmor-new | grep -i apparmor
     # AppArmor profile applied 
 
 
+### Cleanup:
 
+    kubectl delete pod hello-apparmor \
+      hello-apparmor-new \
+      network-restricted \
+      complain-test 2>/dev/null
+    
+    sudo apparmor_parser -R \
+      /etc/apparmor.d/k8s-apparmor-example-deny-write 2>/dev/null
+    sudo apparmor_parser -R \
+      /etc/apparmor.d/k8s-deny-network 2>/dev/null
+    sudo apparmor_parser -R \
+      /etc/apparmor.d/k8s-readonly 2>/dev/null
+    sudo apparmor_parser -R \
+      /etc/apparmor.d/k8s-complain-test 2>/dev/null
+    
+    sudo rm -f \
+      /etc/apparmor.d/k8s-apparmor-example-deny-write \
+      /etc/apparmor.d/k8s-deny-network \
+      /etc/apparmor.d/k8s-readonly \
+      /etc/apparmor.d/k8s-complain-test
+    
+    sudo aa-status | grep "k8s-"
+    # Nothing 
+    
+    cd .. && rm -rf apparmor-lab/
 
  
 
