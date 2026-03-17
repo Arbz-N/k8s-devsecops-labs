@@ -48,3 +48,27 @@ Prerequisites
     # apparmor module is loaded. 
 
 Architecture
+
+        Kubernetes Node (Ubuntu)
+          ┌──────────────────────────────────────────────────────────┐
+          │                                                          │
+          │  AppArmor Kernel Module                                  │
+          │  /etc/apparmor.d/                                        │
+          │  ├── k8s-apparmor-example-deny-write  (enforce)          │
+          │  ├── k8s-deny-network                (enforce)           │
+          │  ├── k8s-readonly                    (enforce)           │
+          │  └── k8s-complain-test               (complain)          │
+          │                          │                               │
+          │                          │ apparmor_parser (load)        │
+          │                          ▼                               │
+          │  Pod: hello-apparmor                                     │
+          │  ┌──────────────────────────────────────────────────┐    │
+          │  │  annotation: localhost/k8s-apparmor-deny-write   │    │
+          │  │  container: busybox                              │    │
+          │  │                                                  │    │
+          │  │  touch test    → Permission denied               │    │
+          │  │  echo x > f    → Permission denied               │    │
+          │  │  cat /etc/hostname → hello-apparmor              │    │
+          │  └──────────────────────────────────────────────────┘    │
+          └──────────────────────────────────────────────────────────┘
+
