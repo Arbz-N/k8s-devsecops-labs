@@ -72,3 +72,38 @@ Architecture
           │  └──────────────────────────────────────────────────┘    │
           └──────────────────────────────────────────────────────────┘
 
+Setup — Install AppArmor Tools
+
+    sudo apt-get update
+    sudo apt-get install -y \
+      apparmor \
+      apparmor-utils \
+      apparmor-profiles
+    
+    aa-status
+    # apparmor module is loaded 
+    
+    ls /etc/apparmor.d/
+    # abstractions/  tunables/  usr.bin.man  usr.sbin.rsyslogd ...
+
+Task 1 — Load AppArmor Profiles
+
+    sudo apparmor_parser \
+      /etc/apparmor.d/k8s-apparmor-example-deny-write
+    sudo aa-status | grep "deny-write"
+    # k8s-apparmor-example-deny-write  ← enforce mode 
+
+    #deny-network Profile
+    sudo apparmor_parser /etc/apparmor.d/k8s-deny-network
+    sudo aa-status | grep "deny-network"
+
+    # k8s-deny-network
+    readonly Profile
+    sudo apparmor_parser /etc/apparmor.d/k8s-readonly
+
+
+ 
+
+
+    
+
