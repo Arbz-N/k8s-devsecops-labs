@@ -32,7 +32,19 @@ Project Structure
 
 Prerequisites
  
-Requirement                      Detail
-Ubuntu/Debian                    AppArmor is enabled by default on Ubuntu
-kubectl                          Connected to cluster
+    Requirement                      Detail
+    Ubuntu/Debian                    AppArmor is enabled by default on Ubuntu
+    kubectl                          Connected to cluster
 
+
+    # Verify AppArmor is active
+    sudo systemctl status apparmor
+    # Active: active (running) 
+    
+    cat /sys/module/apparmor/parameters/enabled
+    # Y 
+    
+    sudo aa-status
+    # apparmor module is loaded. 
+
+Architecture
