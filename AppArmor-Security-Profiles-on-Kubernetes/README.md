@@ -1,4 +1,4 @@
-# AppArmor Security Profiles on Kubernetes
+# AppArmor Security Profiles on Kubernetes:
 
     This is a hands-on project that demonstrates AppArmor security profiles on Kubernetes. 
     It covers writing custom profiles, loading them into the kernel, applying them to pods via annotations (legacy) and securityContext (v1.30+),
