@@ -219,7 +219,7 @@
     sudo aa-status | grep "k8s-"
     # Nothing 
     
-    cd .. && rm -rf apparmor-lab/
+    cd .. && rm -rf apparmor-lab
 
  
 
