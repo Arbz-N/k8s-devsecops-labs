@@ -210,7 +210,7 @@
     sudo apparmor_parser -R \
       /etc/apparmor.d/k8s-complain-test 2>/dev/null
     
-    sudo rm -f 
+    sudo rm -f \
       /etc/apparmor.d/k8s-apparmor-example-deny-write \
       /etc/apparmor.d/k8s-deny-network \
       /etc/apparmor.d/k8s-readonly \
