@@ -216,7 +216,7 @@
       /etc/apparmor.d/k8s-readonly \
       /etc/apparmor.d/k8s-complain-test
     
-    sudo aa-status | grep "k8s-"
+    sudo aa-status | grep "k8s-
     # Nothing 
     
     cd .. && rm -rf apparmor-lab/
